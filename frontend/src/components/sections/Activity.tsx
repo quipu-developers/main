@@ -11,7 +11,7 @@ import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 
 const fetchParams: Record<string, { useHardcoded: boolean; itemsPerPage: number }> = {
     study: { useHardcoded: true, itemsPerPage: 2 },
-    semina: { useHardcoded: true, itemsPerPage: 3 },
+    semina: { useHardcoded: false, itemsPerPage: 3 },
     development: { useHardcoded: true, itemsPerPage: 2 },
     extra: { useHardcoded: true, itemsPerPage: 2 },
 };
