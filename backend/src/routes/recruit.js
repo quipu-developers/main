@@ -133,11 +133,7 @@ router.post("/", upload.single("portfolio_pdf"), async (req, res) => {
               */
 
     // 중복 확인 by student_id
-    const Check = await Member.findOne({
-      where: {
-        student_id,
-      },
-    });
+    const Check = await Member.findOne({ student_id });
     if (Check) {
       if (req.file) {
         await deleteFile(tmpFilepath);
