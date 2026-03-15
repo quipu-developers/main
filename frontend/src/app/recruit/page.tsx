@@ -63,11 +63,10 @@ export default function RecruitForm() {
 
     const checkRecruitmentStatus = async (): Promise<void> => {
         try {
-            // const response = await axios.get<RecruitmentStatusResponse>(
-            //     `${BASE_URL}/feature/recruit`
-            // );
-            // setIsRecruiting(response.data.is_enabled);
-            setIsRecruiting(false);
+            const response = await axios.get<RecruitmentStatusResponse>(
+                `${BASE_URL}/feature/recruit`
+            );
+            setIsRecruiting(response.data.is_enabled);
         } catch (error) {
             console.error(error);
             setIsRecruiting(false);
