@@ -1,0 +1,361 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "forum API",
+    "version": "0.0.1",
+    "description": "quipu backoffice API용 Swagger"
+  },
+  "paths": {
+    "/bo/auth/login": {
+      "post": {
+        "summary": "로그인",
+        "description": "BO에 로그인",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "사용자가 값을 입력하지 않아도, 항상 admin이라는 값으로 오도록 설정해주세요",
+                    "example": "admin"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "비밀번호",
+                    "example": "quipuadmin0316@!"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "로그인 완료",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "로그인 성공"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "비밀번호 틀림",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "비밀번호가 틀림"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 에러",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "서버 에러"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bo/member": {
+      "get": {
+        "summary": "동아리 신청 인원 조회",
+        "description": "member 테이블 조회",
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "조회 성공"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 에러",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "서버 에러"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bo/member/pdf/{filename}": {
+      "get": {
+        "summary": "동아리 신청 시 제출한 pdf 파일 조회",
+        "description": "Cloudflare R2 quipu-recruit-portfolio bucket 조회, Presigned URL을 생성해서 FE에게 반환",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "description": "다운로드할 PDF 파일의 이름",
+            "schema": {
+              "type": "string",
+              "example": "퀴푸_25_1-2020440102이제민.pdf"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "example": "https://r2-cloudflare-example.com/presigned-url"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청"
+          },
+          "500": {
+            "description": "서버 에러"
+          }
+        }
+      }
+    },
+    
+  "/bo/semina": {
+    "post": {
+      "summary": "세미나 정보 등록 및 파일 업로드",
+      "description": "세미나 정보를 DB에 저장, 관련 파일을 Cloudflare R2에 업로드",
+      "consumes": ["multipart/form-data"],
+      "requestBody": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "speaker": {
+                  "type": "string",
+                  "example": "swagger테스터"
+                },
+                "topic": {
+                  "type": "string",
+                  "example": "swagger테스트"
+                },
+                "detail": {
+                  "type": "string",
+                  "example": "swagger로 테스트 중임"
+                },
+                "resources": {
+                  "type": "string",
+                  "example": "https://example.com/resources.pdf"
+                },
+                "presentation_date": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "2025-03-01"
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "데이터 저장 및 파일 업로드 성공",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "데이터 저장 및 파일 업로드 성공"
+                  },
+                  "semina": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "example": 1
+                      },
+                      "speaker": {
+                        "type": "string",
+                        "example": "swagger테스터"
+                      },
+                      "topic": {
+                        "type": "string",
+                        "example": "swagger테스트"
+                      },
+                      "presentation_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-03-01"
+                      }
+                    }
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "original_filename.pdf"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "잘못된 요청",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "업로드할 파일이 없습니다."
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "서버 오류",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "서버 오류"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+    "/bo/auth/logout": {
+      "get": {
+        "summary": "로그아웃",
+        "description": "로그아웃",
+        "responses": {
+          "200": {
+            "description": "로그아웃",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "로그아웃 완료"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 에러",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "로그아웃 중 오류 발생"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bo/feature/recruit": {
+      "get": {
+        "summary": "recruit 상태 조회",
+        "description": "현재 recruit의 상태(is_enabled)를 조회합니다.",
+        "responses": {
+          "200": {
+            "description": "recruit 상태 조회 성공",
+            "content": {
+              "application/json": {
+                "example": {
+                  "is_enabled": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "해당 feature를 찾을 수 없음",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "해당 feature를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 에러",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "서버 오류 발생"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "recruit 상태 변경",
+        "description": "현재 recruit의 상태(is_enabled)를 변경(토글)합니다.",
+        "responses": {
+          "200": {
+            "description": "recruit 상태 변경 성공",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "recruit 상태가 변경되었습니다.",
+                  "is_enabled": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "해당 feature를 찾을 수 없음",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "해당 feature를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 에러",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "서버 오류 발생"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
