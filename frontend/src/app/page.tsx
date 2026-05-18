@@ -9,6 +9,7 @@ import Activity from "@/components/sections/Activity";
 import Technique from "@/components/sections/Technique";
 import Interview from "@/components/sections/Interview";
 import Recruit from "@/components/sections/Recruit";
+import Comment from "@/components/sections/Comment";
 
 export default function MainPage() {
   const [navPosition, setNavPosition] = useState("bottom-0");
@@ -90,6 +91,11 @@ export default function MainPage() {
       {/* 리크루트 섹션 */}
       <Section id="recruit">
         <Recruit />
+      </Section>
+
+      {/* 코멘트 섹션 */}
+      <Section id="comment">
+        <Comment />
       </Section>
     </div>
   );
